@@ -1,0 +1,99 @@
+/*
+*  Here the received data (from nrf24) is diplayed on the OLED display (I2C communication).
+*
+*/
+
+
+#include <SPI.h>
+#include <Wire.h>
+#include<Adafruit_GFX.h>
+#include<Adafruit_SSD1306.h>
+
+#define SCREEN_WIDTH 128                 // OLED display width, in pixels
+#define SCREEN_HEIGHT 64                 // OLED display height, in pixels
+
+
+#define OLED_RESET     -1               // Reset pin # (or -1 if sharing Arduino reset pin)
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
+
+#include <nRF24L01.h>
+#include <RF24.h>
+RF24 radio(9, 10); // CE, CSN
+const byte address[6] = "00001";
+
+
+void setup() 
+{
+  Serial.begin(9600);
+  
+  //pinMode(6, OUTPUT);
+  radio.begin();
+  radio.openReadingPipe(0, address);   //Setting the address at which we will receive the data
+  radio.setPALevel(RF24_PA_HIGH);       //You can set this as minimum or maximum depending on the distance between the transmitter and receiver.
+  radio.setDataRate(RF24_1MBPS);
+  radio.startListening();              //This sets the module as receiver
+
+  Wire.begin();
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  //display.clearDisplay(); 
+}
+/*
+void loop()
+{
+  display.clearDisplay();
+  display.setTextColor(WHITE);
+  display.setTextSize(2);
+  display.setCursor(0,0);
+  display.print("text");
+  display.display();
+  delay(500);
+}
+*/
+void loop()
+{
+    while(!radio.available());              //Looking for the data.
+       char text[32] = "";
+       radio.read(&text, sizeof(text));
+       Serial.println(text);
+       display.clearDisplay();
+       display.setTextColor(WHITE);
+       display.setTextSize(2);
+       display.setCursor(0,0);
+       if (text[0] == '+')
+          display.print("Wait for the message\n");
+       else if(text[0] == '2')
+       {
+          display.println("Move \n");
+          display.setCursor(0,15);
+          display.println("Backward \n");
+       }
+       else if (text[0] == '3')
+          display.println("30 Seconds\n");
+       else if (text[0] == '4')
+          display.println("Retreat\n");
+       else if (text[0] == '5')
+          display.println("STOP\n");
+       else if (text[0] == '6')
+       {
+          display.println("Triangle\n");
+          display.setCursor(0,15);
+          display.println("Formation\n");
+       }  
+       else if (text[0] == '7')
+          display.println("Fire\n");
+       else if (text[0] == '8')
+          display.println("Get Ready\n");
+       else if (text[0] == '9')
+          display.println("Plan B\n");
+       else if(text[0] == '1')
+       {
+          display.println("Move \n");
+          display.setCursor(0,15);
+          display.println("Forward \n");
+       }
+
+       display.display();
+    delay(1000);
+    
+}

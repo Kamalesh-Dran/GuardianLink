@@ -1,0 +1,100 @@
+/*
+*   Here we read 5 analog values of the flex sensor and through I2C communication we get the roll, pitch
+*   and yaw and then we transmit it to the laptop for prediction using serial communication UART
+*   And then the predicted output is then again sent back to the nano in the same way, and then finally 
+*   the predicted output is transmitted wirelessly through nrf24 transreceiver (SPI for communication 
+*   with nano ).
+*
+*/
+
+
+#include <SPI.h>
+#include <nRF24L01.h>
+#include <RF24.h>
+
+RF24 radio(7, 8); // CE, CSN
+#include "Wire.h"
+#include <MPU6050_light.h>
+
+MPU6050 mpu(Wire);
+const byte address[6] = "00001";
+unsigned long timer = 0,tstamp = 0;
+
+int v1,v2,v3,v4,v5;
+float w1,w2,w3,w4,w5;
+float r1,r2,r3,r4,r5;
+char text,txt,fg=1;
+
+void setup() {
+  Serial.begin(9600);
+  Wire.begin();
+  byte status = mpu.begin();
+  delay(1000);
+  mpu.calcOffsets(true,true); // gyro and accelero
+  // RF Initialization
+  radio.begin();
+  radio.openWritingPipe(address);
+  radio.setPALevel(RF24_PA_HIGH);
+  radio.setPALevel(RF24_1MBPS);
+  radio.stopListening();
+  //Serial.println("Done!\n");
+  
+}
+
+void loop() {
+  mpu.update();
+
+  if(millis() - timer > 300){ // print data every second
+  if(millis() - tstamp >=4000)
+  {
+    tstamp = millis();
+  }
+  v1 = analogRead(A7); w1 = (float)v1*5/1023;     // pinky
+  v2 = analogRead(A6); w2 = (float)v2*5/1023;     // dwiddle
+  v3 = analogRead(A3); w3 = (float)v3*5/1023;     // middle
+  v4 = analogRead(A2); w4 = (float)v4*5/1023;     
+  v5 = analogRead(A1); w5 = (float)v5*5/1023;     // thumb
+
+  r1 = (5 - w1)*47000/w1;
+  r2 = (5 - w2)*47000/w2;
+  r3 = (5 - w3)*47000/w3;
+  r4 = (5 - w4)*47000/w4;
+  r5 = (5 - w5)*47000/w5;
+/*
+  Serial.print("DATA,LABEL,");
+  Serial.print(millis() - tstamp);
+  Serial.print(",");
+    */
+  Serial.print(r1);
+  Serial.print(",");  
+  Serial.print(r2);
+  Serial.print(","); 
+  Serial.print(r3);
+  Serial.print(","); 
+  Serial.print(r4);
+  Serial.print(","); 
+  Serial.print(r5);
+  Serial.print(",");
+
+    Serial.print(mpu.getAngleX());Serial.print(",");
+    Serial.print(mpu.getAngleY());Serial.print(",");
+    Serial.println(mpu.getAngleZ());
+    timer = millis();
+    while(!Serial.available());
+    text = Serial.read();
+    Serial.println(text);
+    if(fg == 1){
+     radio.write(&text, sizeof(text));
+     fg = 0;
+     txt = text;
+    }
+    if(text != txt)
+    {
+     Serial.println(txt);
+     radio.write(&text, sizeof(text));
+     txt = text;
+    }
+    
+  }
+
+}
