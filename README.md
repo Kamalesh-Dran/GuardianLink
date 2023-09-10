@@ -38,8 +38,8 @@ Hand Signal Communication System for Defence with Sender and Receiver Gadget (Sp
 * PLX DAQ Data Logger
 ## Architecture of Proposed System
 
-![Transmitter](https://drive.google.com/file/d/1yPxzJTf9DA2p-u30_5Veg_RAgK9q7Mhz/view?usp=sharing)
-![Receiver](https://drive.google.com/file/d/1CEpHIZqZCcGsaF6o0ojzR_mY2E182ncD/view?usp=drive_link)
+![Transmitter](https://github.com/Kamalesh-Dran/GuardianLink/assets/88824460/64397050-889b-4a2a-bd33-6eda0a015738)
+![Receiver](https://github.com/Kamalesh-Dran/GuardianLink/assets/88824460/397c21d7-cb33-446a-a2aa-340fe436a210)
 
 
 
