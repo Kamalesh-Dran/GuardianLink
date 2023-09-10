@@ -52,19 +52,6 @@ Hand Signal Communication System for Defence with Sender and Receiver Gadget (Sp
 * Now to predict the live data we have to transfer the data from Arduino nano to the pycharm IDE for which we will use pyserial library in python to read the serial data from the PORT to which the controller is attached with.
 * Then we will use the sklearn library to train the random forest and for feature scaling to quickly predict the output.
 * After prediction the output is again sent to the controller using pyserial library function and then the message is transmitted to the sub-ordinate controller with the help of radio transceiver which then is displayed on the OLED display
-## Architecture of Proposed System
-
-![Transmitter](https://drive.google.com/file/d/1yPxzJTf9DA2p-u30_5Veg_RAgK9q7Mhz/view?usp=sharing)
-![Receiver](https://drive.google.com/file/d/1CEpHIZqZCcGsaF6o0ojzR_mY2E182ncD/view?usp=drive_link)
-
-
-
-## Architecture of Proposed System
-
-![Transmitter](https://drive.google.com/file/d/1yPxzJTf9DA2p-u30_5Veg_RAgK9q7Mhz/view?usp=sharing)
-![Receiver](https://drive.google.com/file/d/1CEpHIZqZCcGsaF6o0ojzR_mY2E182ncD/view?usp=drive_link)
-
-
 
 ## Performance Metrics
 
